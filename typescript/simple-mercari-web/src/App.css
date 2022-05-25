@@ -3,18 +3,18 @@
 }
 
 .Title {
-  background-color: #222427;
+  /* background-color: #222427; */
   min-height: 8vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: left;
   font-size: calc(10px + 1vmin);
-  color: white;
+  color: black;
 }
 
 .Listing {
-  background-color: #222427;
+  /* background-color: #222427; */
   min-height: 8vh;
   display: flex;
   flex-direction: column;
