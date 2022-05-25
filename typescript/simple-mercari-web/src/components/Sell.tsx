@@ -14,11 +14,14 @@ export const Sell=(props)=>{
           <b>mercari</b>
           </p>
           </header>
-          <h4>商品の出品</h4>
+          <h5 className="text-center fw-bold">商品の出品</h5>
           <div>
           <Listing onListingCompleted={() => setReload(true)} />
           </div>
-        <button onClick={onClickSell}>出品する</button>
+        <div className="text-center">
+        <button type='submit' className="btn btn-danger" onClick={onClickSell}>出品する</button>
+        </div>
+        
         </>
     )
 } 

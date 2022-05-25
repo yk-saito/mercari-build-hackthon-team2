@@ -55,11 +55,21 @@ export const Listing: React.FC<Prop> = (props) => {
     <div className='Listing'>
       <form onSubmit={onSubmit}>
         <div>
-          <input type='text' name='name' id='name' placeholder='name' onChange={onValueChange} required />
-          <input type='text' name='category' id='category' placeholder='category' onChange={onValueChange} />
+         <div className="mb-3">
+          <label className="form-label">商品の名前</label>
+          <input type='text' name='name' className="form-control" id='name' placeholder='name' onChange={onValueChange} required />
+          </div>
+          <div className="mb-3">
+          <label className="form-label">商品のカテゴリー</label>
+          <input type='text' name='category' className="form-control" id='category' placeholder='category' onChange={onValueChange} />
+          </div>
           {/* <input type='text' name='itemCondition' id='itemCondition' placeholder='itemCondition' onChange={onValueChange} /> */}
+          <div className="mb-3">
+          <label className="form-label">出品画像</label>
+          <br/>
           <input type='file' name='image' id='image' onChange={onFileChange} required />
-          <button type='submit'>List this item</button>
+          </div>
+          {/* <button type='submit'>出品する</button> */}
         </div>
       </form>
     </div>
