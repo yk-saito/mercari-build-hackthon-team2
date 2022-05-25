@@ -7,6 +7,10 @@ services:
     image: build2022/web:latest
     ports:
       - "3000:3000"
+    volumes:
+      - type: bind
+        source: "./typescript/simple-mercari-web/src"
+        target: "/app/simple-mercari-web/src"
     environment:
       API_URL: http://localhost:9000
 
