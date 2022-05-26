@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from "react-router-dom"
 
 const server = process.env.API_URL || 'http://127.0.0.1:9000';
 
@@ -20,6 +21,10 @@ export const Listing: React.FC<Prop> = (props) => {
     image: "",
   };
   const [values, setValues] = useState<formDataType>(initialState);
+
+  const history=useHistory();
+
+  const onClickSell=()=>history.push("/")
 
   const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
@@ -53,21 +58,30 @@ export const Listing: React.FC<Prop> = (props) => {
   };
   return (
     <div className='Listing'>
+      <header className='Title'>
+          <p>
+          <b>mercari</b>
+          </p>
+          </header>
+          <h5 className="text-center fw-bold">商品の出品</h5>
       <form onSubmit={onSubmit}>
         <div>
-         <div className="mb-3">
-          <label className="form-label">商品の名前</label>
-          <input type='text' name='name' className="form-control" id='name' placeholder='name' onChange={onValueChange} required />
+          <div className="mb-3">
+            <label className="form-label">商品の名前</label>
+            <input type='text' name='name' className="form-control" id='name' placeholder='name' onChange={onValueChange} required />
           </div>
           <div className="mb-3">
-          <label className="form-label">商品のカテゴリー</label>
-          <input type='text' name='category' className="form-control" id='category' placeholder='category' onChange={onValueChange} />
+            <label className="form-label">商品のカテゴリー</label>
+            <input type='text' name='category' className="form-control" id='category' placeholder='category' onChange={onValueChange} />
           </div>
           {/* <input type='text' name='itemCondition' id='itemCondition' placeholder='itemCondition' onChange={onValueChange} /> */}
           <div className="mb-3">
-          <label className="form-label">出品画像</label>
-          <br/>
-          <input type='file' name='image' id='image' onChange={onFileChange} required />
+            <label className="form-label">出品画像</label>
+            <br/>
+            <input type='file' name='image' id='image' onChange={onFileChange} required />
+          </div>
+          <div className="text-center">
+            <button type='submit' className="btn btn-danger" onClick={onClickSell}>出品する</button>
           </div>
           {/* <button type='submit'>出品する</button> */}
         </div>
