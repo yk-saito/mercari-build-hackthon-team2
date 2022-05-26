@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 interface Item {
   id: number;
@@ -18,6 +19,9 @@ interface Prop {
 export const ItemList: React.FC<Prop> = (props) => {
   const { reload = true, onLoadCompleted } = props;
   const [items, setItems] = useState<Item[]>([])
+  const history=useHistory();
+  const onClickGoSell=()=>history.push("/sell")
+
   const fetchItems = () => {
     fetch(server.concat('/items'),
       {
@@ -51,6 +55,9 @@ export const ItemList: React.FC<Prop> = (props) => {
         <p>
           <b>商品一覧</b>
         </p>
+        <div className='text-center'>
+          <button onClick={onClickGoSell} className="btn btn-danger">出品</button>
+        </div>
       </header>
     <div className='ItemListContainer'>
       {items.map((item) => {
@@ -66,6 +73,7 @@ export const ItemList: React.FC<Prop> = (props) => {
         )
       })}
     </div>
+    
     </div>
   )
 };

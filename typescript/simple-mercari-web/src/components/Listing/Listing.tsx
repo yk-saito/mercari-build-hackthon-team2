@@ -64,7 +64,7 @@ export const Listing: React.FC<Prop> = (props) => {
           </p>
           </header>
           <h5 className="text-center fw-bold">商品の出品</h5>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="p-lg-5">
         <div>
           <div className="mb-3">
             <label className="form-label">商品の名前</label>
