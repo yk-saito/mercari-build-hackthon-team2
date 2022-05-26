@@ -74,7 +74,7 @@ def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadF
     image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
     
     #画像を保存
-    filepath = f"../images/{image_filename}"
+    filepath = f"image/{image_filename}"
     with open(filepath, "w+b") as f:
         shutil.copyfileobj(image.file, f)
 
