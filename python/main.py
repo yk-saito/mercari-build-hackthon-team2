@@ -74,6 +74,9 @@ def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadF
     image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
     
     #画像を保存
+    directory_name = "image"
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)
     filepath = f"image/{image_filename}"
     with open(filepath, "w+b") as f:
         shutil.copyfileobj(image.file, f)
@@ -84,6 +87,14 @@ def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadF
     parameter = [name, category_id, image_filename]
     db.execute_insert(sql, parameter)
     return {"message": f"item received: {name}"}
+
+@app.get("/items/{item_id}")
+def search_item_by_id(item_id):
+    db = DBConnection()
+    sql = "SELECT name, category_id, image_filename AS items FROM items WHERE id=?"
+    parameter = [item_id]
+    item = db.execute_select(sql, parameter)
+    return item
 
 
 @app.get("/search")
