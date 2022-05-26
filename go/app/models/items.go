@@ -20,7 +20,7 @@ type Item struct {
 
 func GetItem(db *sql.DB, query string) ([]Item, error) {
 	if query == "" {
-		query = "SELECT items.id, items.name, category.name, items.image_filename FROM items INNER JOIN category ON (items.category_id = category.id)"
+		query = "SELECT * FROM items"
 	}
 
 	stmt, err := db.Prepare(query)
@@ -52,7 +52,7 @@ func GetItem(db *sql.DB, query string) ([]Item, error) {
 func GetItemById(db *sql.DB, id string) (Item, error) {
 	item := Item{}
 
-	stmt, err := db.Prepare("SELECT items.name, category.name, items.image_filename FROM items INNER JOIN category ON (items.category_id = category.id) WHERE items.id = ?")
+	stmt, err := db.Prepare("SELECT items.name, items.category, items.image_filename FROM items WHERE items.id = ?")
 	if err != nil {
 		return item, err
 	}
@@ -68,58 +68,20 @@ func GetItemById(db *sql.DB, id string) (Item, error) {
 	}
 }
 
-func insertNewCategory(categoryName string, tx *sql.Tx) (int, error) {
-	var categoryId int
-
-	stmt, err := tx.Prepare("INSERT INTO category(name) VALUES(?) RETURNING id")
-	if err != nil {
-		return categoryId, err
-	}
-	defer stmt.Close()
-
-	sqlErr := stmt.QueryRow(categoryName).Scan(&categoryId)
-	if sqlErr == sql.ErrNoRows || sqlErr != nil {
-		return categoryId, sqlErr
-	}
-	return categoryId, nil
-}
-
 func AddItem(db *sql.DB, newItem Item) error {
 	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
 
-	// Get id from category table
-	stmt, err := tx.Prepare("SELECT category.id FROM category WHERE category.name = ?")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	var categoryId int
-
-	sqlErr := stmt.QueryRow(newItem.Category).Scan(&categoryId)
-	switch {
-	case sqlErr == sql.ErrNoRows:
-		var insertErr error
-		categoryId, insertErr = insertNewCategory(newItem.Category, tx)
-		if insertErr != nil {
-			return insertErr
-		}
-	case sqlErr != nil:
-		return sqlErr
-	default:
-	}
-
 	// Save data
-	stmt, err = tx.Prepare("INSERT INTO items(name, category_id, image_filename) VALUES(?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO items(name, category, image_filename) VALUES(?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(newItem.Name, categoryId, newItem.Image)
+	_, err = stmt.Exec(newItem.Name, newItem.Category, newItem.Image)
 	if err != nil {
 		return err
 	}
@@ -132,7 +94,7 @@ func AddItem(db *sql.DB, newItem Item) error {
 }
 
 func SearchItem(db *sql.DB, key string) ([]Item, error) {
-	q := fmt.Sprintf("SELECT items.name, category.name, items.image_filename FROM items INNER JOIN category ON (items.category_id = category.id) WHERE items.name = '%s' or category.name = '%s'",
+	q := fmt.Sprintf("SELECT items.name, items.category, items.image_filename FROM items WHERE items.name = '%s' or items.category = '%s'",
 		key, key)
 
 	items, err := GetItem(db, q)
