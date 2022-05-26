@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # 指定した画像(path)の物体を検出し、外接矩形の画像を出力します
-def detect_contour(path):
+def detect_contour(path, name):
 
     # 画像を読込
     src = cv2.imread(path, cv2.IMREAD_COLOR)
@@ -16,7 +16,6 @@ def detect_contour(path):
 
     # 2値化
     retval, bw = cv2.threshold(gray, 250, 255, cv2.THRESH_BINARY_INV)
-    cv2.imwrite('images/bin_ball.jpg', bw)
     
     # 輪郭抽出
     contours, hierarchy = cv2.findContours(bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -41,16 +40,16 @@ def detect_contour(path):
             # 余白を考慮して画像を保存
             if x - w * 0.15 >= 0 and x + w * 1.15 < width:#横幅の確保ができるとき
                 if y - h * 0.15 >= 0 and y + h * 1.15 < height:#縦幅の確保ができるとき
-                    cv2.imwrite('images/' + str(detect_count) + 'ball.jpg', src_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)])
+                    cv2.imwrite('python/images/' + str(detect_count) + name, src_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)])
                 else:
-                    cv2.imwrite('images/' + str(detect_count) + 'ball.jpg', src_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)])
+                    cv2.imwrite('python/images/' + str(detect_count) + name, src_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)])
             else:
                 if y - h * 0.15 >= 0 and y + h * 1.15 < height:#縦幅の確保ができるとき 
-                    cv2.imwrite('images/' + str(detect_count) + 'ball.jpg', src_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w]) 
+                    cv2.imwrite('python/images/' + str(detect_count) + name, src_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w]) 
                 else:   
-                    cv2.imwrite('images/' + str(detect_count) + 'ball.jpg', src_w[y:y + h, x:x + w])
+                    cv2.imwrite('python/images/' + str(detect_count) + name, src_w[y:y + h, x:x + w])
 
             detect_count = detect_count + 1
 
-if __name__ == '__main__':
-    detect_contour('images/ball.jpg')
+#if __name__ == '__main__':
+#    detect_contour('python/images/ball.jpg', 'ball.jpg')
