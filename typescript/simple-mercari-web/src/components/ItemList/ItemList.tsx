@@ -46,6 +46,12 @@ export const ItemList: React.FC<Prop> = (props) => {
   }, [reload]);
 
   return (
+    <div>
+      <header className='Title'>
+        <p>
+          <b>商品一覧</b>
+        </p>
+      </header>
     <div className='ItemListContainer'>
       {items.map((item) => {
         return (
@@ -59,6 +65,7 @@ export const ItemList: React.FC<Prop> = (props) => {
           </div>
         )
       })}
+    </div>
     </div>
   )
 };
