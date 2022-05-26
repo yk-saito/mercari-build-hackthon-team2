@@ -44,7 +44,7 @@ class DBConnection:
     def execute_select(self, sql, parameter=[]):
         try:
             sql_result = self.cursor.execute(sql, parameter).fetchall()
-            self.cursor.commit()
+            self.connection.commit()
         except Exception as e:
             sys.exit(e)
 
@@ -56,14 +56,13 @@ class DBConnection:
         except Exception as e:
             sys.exit(e)
 
-db = DBConnection()
-
 @app.get("/")
 def root():
     return {"message": "Hello, world!"}
 
 @app.get("/items")
 def get_item():
+    db = DBConnection()
     sql = "SELECT * FROM items"
     item_obj = db.execute_select(sql)
     return item_obj
@@ -80,38 +79,22 @@ def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadF
         shutil.copyfileobj(image.file, f)
 
     #DB
-    with sqlite3.connect("../db/mercari.sqlite3") as conn:
-        #カーソル
-        cur = conn.cursor()
-        #テーブルがなければ作成
-        cur.execute("CREATE TABLE IF NOT EXISTS items (\
-            id INTEGER AUTO_INCREMENT, \
-            name TEXT NOT NULL,\
-            category_id INTEGER\
-            image_filename TEXT NOT NULL\
-            )")
-
-        #受け取ったデータを追加
-        #(?, ?, ?)はプレースホルダ
-        cur.execute("INSERT INTO items (name, category_id, image_filename) VALUES (?, ?, ?)", (name, category_id, image_filename))
-        #変更の反映
-        conn.commit()
-
+    db = DBConnection()
+    sql = "INSERT INTO items (name, category_id, image_filename) VALUES (?, ?, ?)"
+    parameter = [name, category_id, image_filename]
+    db.execute_insert(sql, parameter)
     return {"message": f"item received: {name}"}
 
 
 @app.get("/search")
 def search_item(keyword: str):
-    
-    with sqlite3.connect("../db/mercari.sqlite3") as conn:
-        cur = conn.cursor()
-        #データの取得
-        cur.execute("SELECT name, category AS items FROM items WHERE name=?", (keyword,))
-        item = cur.fetchall()
-        item_dict = {"items" : []}
-        for i in range(len(item)):
-                item_dict["items"].append({"name": item[i][0], "category": item[i][1], "image_filename": item[i][2]})
-        
+    db = DBConnection()
+    sql = "SELECT name, category_id, image_filename AS items FROM items WHERE name=?"
+    parameter = [keyword]
+    items = db.execute_select(sql, parameter)
+    item_dict = {"items" : []}
+    for i in range(len(items)):
+            item_dict["items"].append({"name": items[i][0], "category_id": items[i][1], "image_filename": items[i][2]})
     return item_dict
     
 
