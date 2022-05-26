@@ -47,11 +47,16 @@ export const ItemList: React.FC<Prop> = (props) => {
 
   return (
     <div>
+      <header className='Title'>
+        <p>
+          <b>商品一覧</b>
+        </p>
+      </header>
+    <div className='ItemListContainer'>
       {items.map((item) => {
         return (
-          <div key={item.id} className='ItemList'>
-            {/* TODO: Task 1: Replace the placeholder image with the item image */}
-            <img src={placeholderImage} />
+          <div key={item.id} id='Item' className='ItemList'>
+            <img src={server + '/image/' + item.id + '.jpg'} />
             <p>
               <span>Name: {item.name}</span>
               <br />
@@ -60,6 +65,7 @@ export const ItemList: React.FC<Prop> = (props) => {
           </div>
         )
       })}
+    </div>
     </div>
   )
 };
