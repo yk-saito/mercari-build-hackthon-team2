@@ -13,7 +13,7 @@ app = FastAPI()
  
 logger = logging.getLogger("uvicorn")
 logger.level = logging.INFO
-images = pathlib.Path(__file__).parent.resolve() / "image"
+images = pathlib.Path(__file__).parent.resolve() / "images"
 origins = [ os.environ.get('FRONT_URL', 'http://localhost:3000') ]
 app.add_middleware(
     CORSMiddleware,
@@ -77,7 +77,7 @@ def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile
     directory_name = "image"
     if not os.path.exists(directory_name):
         os.makedirs(directory_name)
-    filepath = f"image/{image_filename}"
+    filepath = f"images/{image_filename}"
     with open(filepath, "w+b") as f:
         shutil.copyfileobj(image.file, f)
 
@@ -112,12 +112,16 @@ def search_item(keyword: str):
 
 @app.get("/image/{items_image}")
 async def get_image(items_image):
+    db = DBConnection()
     # Create image path
-    image = images / items_image
-
     if not items_image.endswith(".jpg"):
         raise HTTPException(status_code=400, detail="Image path does not end with .jpg")
 
+    image_id = os.path.splitext(os.path.basename(items_image))[0]
+    sql = "SELECT name, category, image_filename AS items FROM items WHERE id=?"
+    parameter = [image_id]
+    item = db.execute_select(sql, parameter)
+    image = images /item[0][2]
     if not image.exists():
         logger.debug(f"Image not found: {image}")
         image = images / "default.jpg"
