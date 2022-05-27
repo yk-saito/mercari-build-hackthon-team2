@@ -1,4 +1,14 @@
-FROM alpine
+# syntax=docker/dockerfile:1
 
-# STEP4-4では以下は変更しない
-CMD ["python", "-V"]
+FROM python:3.8-slim-buster
+
+# Copy necessary files
+WORKDIR /app
+COPY db/items.db ./db/items.db
+COPY python/ ./python/
+
+# Install pip packages
+WORKDIR /app/python
+RUN pip install -r requirements.txt
+
+CMD ["uvicorn", "main:app", "--reload", "--port", "9000", "--host=0.0.0.0"]
