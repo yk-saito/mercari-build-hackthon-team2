@@ -24,7 +24,7 @@ export const Listing: React.FC<Prop> = (props) => {
 
   const history=useHistory();
 
-  const onClickSell=()=>history.push("/")
+  // const onClickSell=()=>history.push("/")
 
   const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
@@ -55,6 +55,7 @@ export const Listing: React.FC<Prop> = (props) => {
       .catch((error) => {
         console.error('POST error:', error);
       })
+      history.push("/")
   };
   return (
     <div className='Listing'>
@@ -81,7 +82,7 @@ export const Listing: React.FC<Prop> = (props) => {
             <input type='file' name='image' id='image' onChange={onFileChange} required />
           </div>
           <div className="text-center">
-            <button type='submit' className="btn btn-danger" onClick={onClickSell}>出品する</button>
+            <button type='submit' className="btn btn-danger">出品する</button>
           </div>
           {/* <button type='submit'>出品する</button> */}
         </div>
