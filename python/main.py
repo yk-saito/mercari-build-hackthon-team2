@@ -1,3 +1,4 @@
+from concurrent.futures import process
 import os
 import logging
 import pathlib
@@ -8,6 +9,7 @@ import sys
 from fastapi import FastAPI, Form, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import crop_image
 
 app = FastAPI()
  
@@ -72,22 +74,31 @@ def get_item():
 
 @app.post("/items")
 def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile = File(...)):
+    image_processor = crop_image.cropImage()
     image_title = pathlib.Path(image.filename).stem
     image_suffix = pathlib.Path(image.filename).suffix
-    image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
-    
+    image_filename = image_title + image_suffix
+    hashed_image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
+
     #画像を保存
-    directory_name = "image"
+    directory_name = "processing_images"
     if not os.path.exists(directory_name):
         os.makedirs(directory_name)
-    filepath = f"images/{image_filename}"
-    with open(filepath, "w+b") as f:
+    processing_filepath = f"processing_images/{image_filename}"
+    with open(processing_filepath, "w+b") as f:
         shutil.copyfileobj(image.file, f)
+    processed_image = image_processor.rotate_img(directory_name+"/", image_filename)
+    #画像を保存
+    directory_name = "images"
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)
+    filepath = f"images/{hashed_image_filename}"
+    shutil.move(processed_image, filepath)
 
     #DB
     db = DBConnection()
     sql = "INSERT INTO items (name, category, image_filename) VALUES (?, ?, ?)"
-    parameter = [name, category, image_filename]
+    parameter = [name, category, hashed_image_filename]
     db.execute_insert(sql, parameter)
     return {"message": f"item received: {name}"}
 
