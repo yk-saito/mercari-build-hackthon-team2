@@ -1,25 +1,31 @@
 version: "3.9"
 services:
-  frontend:
+  web:
     build:
       context: .
       dockerfile: ./typescript/simple-mercari-web/dockerfile
-    image: build2022/web:latest
+    image: "build2022/web:latest"
+    container_name: "build2022-web"
     ports:
       - "3000:3000"
     volumes:
       - type: bind
-        source: "./typescript/simple-mercari-web/src"
-        target: "/app/simple-mercari-web/src"
+        source: ./typescript/simple-mercari-web/src
+        target: /app/simple-mercari-web/src
     environment:
       API_URL: http://localhost:9000
 
-  backend:
+  app:
     build:
       context: .
-      dockerfile: ./go/dockerfile
-    image: build2022/app:latest
+      dockerfile: ./python/dockerfile
+    image: "build2022/app:latest"
+    container_name: "build2022-app"
     ports:
       - "9000:9000"
+    volumes:
+      - type: bind
+        source: ./python
+        target: /app/python
     environment:
       FRONT_URL: http://localhost:3000
