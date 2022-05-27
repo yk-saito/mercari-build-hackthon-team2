@@ -63,7 +63,7 @@ export const ItemList: React.FC<Prop> = (props) => {
       {items.map((item) => {
         return (
           <div key={item.id} id='Item' className='ItemList'>
-            <img src={server + '/image/' + item.id + '.jpg'}  onClick={onClickGoSell}/>
+            <img src={server + '/image/' + item.id + '.jpg'}/>
             <p>
               <span>Name: {item.name}</span>
               <br />
