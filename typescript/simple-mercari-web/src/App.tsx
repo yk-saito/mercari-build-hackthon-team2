@@ -21,7 +21,6 @@ function App() {
         <Route exact path="/">
           <div>
             <ItemList reload={reload} onLoadCompleted={() => setReload(false)} />
-            
           </div>
         </Route>
         <Route
