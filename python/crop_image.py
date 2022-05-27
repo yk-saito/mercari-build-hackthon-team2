@@ -15,7 +15,8 @@ def rotate_img(path, name):
     gray = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
 
     # 2値化
-    retval, bw = cv2.threshold(gray, 250, 255, cv2.THRESH_BINARY_INV)
+    retval, bw = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+    #cv2.imwrite('python/images/bin.jpg', bw)
     
     # 輪郭抽出
     contours, hierarchy = cv2.findContours(bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -68,7 +69,7 @@ def rotate_img(path, name):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # 2値化
-        retval, bw = cv2.threshold(gray, 250, 255, cv2.THRESH_BINARY_INV)
+        retval, bw = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
         
         # 輪郭抽出
         contours, hierarchy = cv2.findContours(bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -105,5 +106,5 @@ def rotate_img(path, name):
                 
     detect_contour(path, name, affine_img, affine_img_w)
 
-#if __name__ == '__main__':
-    #rotate_img('python/images/shoes.jpg', 'shoes.jpg')
+if __name__ == '__main__':
+    rotate_img('python/images/mouse.jpg', 'mouse.jpg')
