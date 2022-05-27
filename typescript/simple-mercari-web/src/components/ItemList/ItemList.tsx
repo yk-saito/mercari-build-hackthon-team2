@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 interface Item {
   id: number;
@@ -18,6 +19,9 @@ interface Prop {
 export const ItemList: React.FC<Prop> = (props) => {
   const { reload = true, onLoadCompleted } = props;
   const [items, setItems] = useState<Item[]>([])
+  const history=useHistory();
+  const onClickGoSell=()=>history.push("/sell")
+
   const fetchItems = () => {
     fetch(server.concat('/items'),
       {
@@ -47,11 +51,19 @@ export const ItemList: React.FC<Prop> = (props) => {
 
   return (
     <div>
+      <header className='Title'>
+        <p>
+          <b>商品一覧</b>
+        </p>
+        <div className='text-center'>
+          <button onClick={onClickGoSell} className="btn btn-danger">出品</button>
+        </div>
+      </header>
+    <div className='ItemListContainer'>
       {items.map((item) => {
         return (
-          <div key={item.id} className='ItemList'>
-            {/* TODO: Task 1: Replace the placeholder image with the item image */}
-            <img src={placeholderImage} />
+          <div key={item.id} id='Item' className='ItemList'>
+            <img src={server + '/image/' + item.id + '.jpg'}/>
             <p>
               <span>Name: {item.name}</span>
               <br />
@@ -60,6 +72,8 @@ export const ItemList: React.FC<Prop> = (props) => {
           </div>
         )
       })}
+    </div>
+    
     </div>
   )
 };
