@@ -64,8 +64,11 @@ def root():
 def get_item():
     db = DBConnection()
     sql = "SELECT * FROM items"
-    item_obj = db.execute_select(sql)
-    return item_obj
+    item_dict = {"items" : []}
+    items = db.execute_select(sql)
+    for i in range(len(items)):
+            item_dict["items"].append({"id": items[i][0], "name": items[i][1], "category": items[i][2], "image_filename": items[i][3]})
+    return item_dict
 
 @app.post("/items")
 def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile = File(...)):
@@ -105,7 +108,7 @@ def search_item(keyword: str):
     items = db.execute_select(sql, parameter)
     item_dict = {"items" : []}
     for i in range(len(items)):
-            item_dict["items"].append({"name": items[i][0], "category": items[i][1], "image_filename": items[i][2]})
+            item_dict["items"].append({"id": items[i][0], "name": items[i][1], "category": items[i][2], "image_filename": items[i][3]})
     return item_dict
     
 
