@@ -118,8 +118,8 @@ async def get_image(items_image):
     # Create image path
     image = images / items_image
 
-    if not items_image.endswith(".jpg"):
-        raise HTTPException(status_code=400, detail="Image path does not end with .jpg")
+    if not items_image.endswith(".jpg") and not items_image.endswith(".png") :
+        raise HTTPException(status_code=400, detail="Image path does not end with .jpg or .png")
 
     if not image.exists():
         logger.debug(f"Image not found: {image}")
