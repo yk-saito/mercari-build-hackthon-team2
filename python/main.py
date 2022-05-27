@@ -68,7 +68,7 @@ def get_item():
     return item_obj
 
 @app.post("/items")
-def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadFile = File(...)):
+def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile = File(...)):
     image_title = pathlib.Path(image.filename).stem
     image_suffix = pathlib.Path(image.filename).suffix
     image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
@@ -83,15 +83,15 @@ def add_item(name: str = Form(...), category_id: str = Form(...), image: UploadF
 
     #DB
     db = DBConnection()
-    sql = "INSERT INTO items (name, category_id, image_filename) VALUES (?, ?, ?)"
-    parameter = [name, category_id, image_filename]
+    sql = "INSERT INTO items (name, category, image_filename) VALUES (?, ?, ?)"
+    parameter = [name, category, image_filename]
     db.execute_insert(sql, parameter)
     return {"message": f"item received: {name}"}
 
 @app.get("/items/{item_id}")
 def search_item_by_id(item_id):
     db = DBConnection()
-    sql = "SELECT name, category_id, image_filename AS items FROM items WHERE id=?"
+    sql = "SELECT name, category, image_filename AS items FROM items WHERE id=?"
     parameter = [item_id]
     item = db.execute_select(sql, parameter)
     return item
@@ -100,12 +100,12 @@ def search_item_by_id(item_id):
 @app.get("/search")
 def search_item(keyword: str):
     db = DBConnection()
-    sql = "SELECT name, category_id, image_filename AS items FROM items WHERE name=?"
+    sql = "SELECT name, category, image_filename AS items FROM items WHERE name=?"
     parameter = [keyword]
     items = db.execute_select(sql, parameter)
     item_dict = {"items" : []}
     for i in range(len(items)):
-            item_dict["items"].append({"name": items[i][0], "category_id": items[i][1], "image_filename": items[i][2]})
+            item_dict["items"].append({"name": items[i][0], "category": items[i][1], "image_filename": items[i][2]})
     return item_dict
     
 
