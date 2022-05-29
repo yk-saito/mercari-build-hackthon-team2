@@ -25,28 +25,64 @@
   color: white; */
 }
 
-.ItemListContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/*
 
+  商品一覧ページ
+
+*/
+#top {
+  padding-top: 80px;
+  padding-bottom: 160px;
+}
+
+img {
+  max-width: 100%;
 }
 
 .ItemList {
-  background-color: white;
-  min-height: 8vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: left;
-  font-size: calc(10px + 1vmin);
-  color: black;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 40px;
 }
 
-#Item span {
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.item div {
+  width: 23%;
+  background-color: #a1a1a1;
+  margin-bottom: 3rem;
+  padding: 3rem;
+}
+
+.item image {
+  display: block;
+  margin-bottom: 3rem;
+  width: 100%;
+  height: auto;
+}
+
+.item span {
+  margin-top: 20px;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+}
+
+@media screen and (max-width: 900px) {
+  .item li {
+    width: 47%;
+  }
 }
 
 .App-link {
