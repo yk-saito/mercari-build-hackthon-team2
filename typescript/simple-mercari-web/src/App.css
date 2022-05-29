@@ -30,7 +30,6 @@
   商品一覧ページ
 
 */
-
 #top {
   padding-top: 80px;
   padding-bottom: 160px;
@@ -60,7 +59,7 @@ img {
 
 .item div {
   width: 23%;
-  background-color: #6b6b6b;
+  background-color: #a1a1a1;
   margin-bottom: 3rem;
   padding: 3rem;
 }
@@ -73,6 +72,7 @@ img {
 }
 
 .item span {
+  margin-top: 20px;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -84,8 +84,6 @@ img {
     width: 47%;
   }
 }
-
-
 
 .App-link {
   color: #61dafb;
