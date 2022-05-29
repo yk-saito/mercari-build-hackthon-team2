@@ -1,5 +1,6 @@
 from concurrent.futures import process
 import os
+import datetime
 import logging
 import pathlib
 import sqlite3
@@ -90,7 +91,8 @@ def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile
             shutil.copyfileobj(image.file, f)
         
         processed_image = image_processor.rotate_img(directory_name_processing+"/", image_filename)
-        processed_image_title = os.path.splitext(os.path.basename(processed_image))[0]
+        dt_now = datetime.datetime.now()
+        processed_image_title = os.path.splitext(os.path.basename(processed_image))[0] + dt_now.strftime('%Y-%m-%d %H:%M:%S')
         hashed_image_filename = hashlib.sha256(processed_image_title.encode()).hexdigest() + image_suffix
         old_filepath = directory_name_processing+"/" + processed_image
         #画像を保存
@@ -100,7 +102,8 @@ def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile
         filepath = f"images/{hashed_image_filename}"
         os.rename(old_filepath, filepath)
     else:
-        hashed_image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
+        dt_now = datetime.datetime.now()
+        hashed_image_filename = hashlib.sha256((image_title + dt_now.strftime('%Y-%m-%d %H:%M:%S')).encode()).hexdigest() + image_suffix
         #画像を保存
         directory_name = "images"
         if not os.path.exists(directory_name):
