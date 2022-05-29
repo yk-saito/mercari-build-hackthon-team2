@@ -63,12 +63,10 @@ export const ItemList: React.FC<Prop> = (props) => {
       <div className="item">
       {items.map((item) => {
         return (
-          // <li>
           <div>
             <img src={server + '/image/' + item.id + '.jpg'}/>
             <p><span>Name: {item.name}</span></p>
             <p><span>Category: {item.category}</span></p>
-          {/* </li> */}
           </div>
         )
       })}
