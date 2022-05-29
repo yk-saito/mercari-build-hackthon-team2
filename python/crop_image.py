@@ -145,6 +145,25 @@ class cropImage:
                     detect_count = detect_count + 1
             return directory + str(detect_count-1) + name            
         return detect_contour(directory, name, affine_img, affine_img_w)
+    
+    def square(directory, name):#余白を考慮して画像を保存
+        # 画像を読込
+        src = cv2.imread(directory+name, cv2.IMREAD_COLOR)
+        # 画像の大きさ
+        height, width, channels = src.shape[:3]
+        
+        if width == height:#すでに正方形だったら
+            cv2.imwrite(directory + 'sq_' + name, src)
+        elif width > height:#横幅が大きければ
+            diff = (width - height)//2#余白の大きさ
+            output_img = cv2.copyMakeBorder(src, diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+            cv2.imwrite(directory + 'sq_' + name, output_img)
+        else:#縦幅が大きければ
+            diff = (height - width)//2#余白の大きさ
+            output_img = cv2.copyMakeBorder(src, 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+            cv2.imwrite(directory + 'sq_' + name, output_img)
+        return directory + 'sq_' + name
+    
 
     # if __name__ == '__main__':
     #     rotate_img('python/pre_triming_images/mouse.jpg', 'mouse.jpg')
