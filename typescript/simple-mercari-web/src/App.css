@@ -51,15 +51,28 @@ img {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 40px;
 }
 
-.item li {
-  list-style: none;
+.item div {
   width: 23%;
-  margin-bottom: 40px;
+  background-color: #6b6b6b;
+  margin-bottom: 3rem;
+  padding: 3rem;
 }
 
-#Item span {
+.item image {
+  display: block;
+  margin-bottom: 3rem;
+  width: 100%;
+  height: auto;
+}
+
+.item span {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;

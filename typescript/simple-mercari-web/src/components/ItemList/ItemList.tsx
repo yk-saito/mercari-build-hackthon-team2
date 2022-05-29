@@ -60,17 +60,19 @@ export const ItemList: React.FC<Prop> = (props) => {
         </div>
       </header>
     <div id="top" className='ItemList'>
-      <ul className="item">
+      <div className="item">
       {items.map((item) => {
         return (
-          <li>
+          // <li>
+          <div>
             <img src={server + '/image/' + item.id + '.jpg'}/>
             <p><span>Name: {item.name}</span></p>
             <p><span>Category: {item.category}</span></p>
-          </li>
+          {/* </li> */}
+          </div>
         )
       })}
-      </ul>
+      </div>
     </div>
 
     </div>
