@@ -59,21 +59,20 @@ export const ItemList: React.FC<Prop> = (props) => {
           <button onClick={onClickGoSell} className="btn btn-danger">出品</button>
         </div>
       </header>
-    <div className='ItemListContainer'>
+    <div id="top" className='ItemList'>
+      <ul className="item">
       {items.map((item) => {
         return (
-          <div key={item.id} id='Item' className='ItemList'>
+          <li>
             <img src={server + '/image/' + item.id + '.jpg'}/>
-            <p>
-              <span>Name: {item.name}</span>
-              <br />
-              <span>Category: {item.category}</span>
-            </p>
-          </div>
+            <p><span>Name: {item.name}</span></p>
+            <p><span>Category: {item.category}</span></p>
+          </li>
         )
       })}
+      </ul>
     </div>
-    
+
     </div>
   )
 };
