@@ -20,7 +20,7 @@ export const Listing: React.FC<Prop> = (props) => {
     name: "",
     category: "",
     image: "",
-    flag: "",
+    flag: "false",
   };
   const [values, setValues] = useState<formDataType>(initialState);
 
