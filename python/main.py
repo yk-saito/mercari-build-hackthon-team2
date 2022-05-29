@@ -1,3 +1,4 @@
+from concurrent.futures import process
 import os
 import logging
 import pathlib
@@ -8,12 +9,13 @@ import sys
 from fastapi import FastAPI, Form, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+import crop_image
 
 app = FastAPI()
  
 logger = logging.getLogger("uvicorn")
 logger.level = logging.INFO
-images = pathlib.Path(__file__).parent.resolve() / "image"
+images = pathlib.Path(__file__).parent.resolve() / "images"
 origins = [ os.environ.get('FRONT_URL', 'http://localhost:3000') ]
 app.add_middleware(
     CORSMiddleware,
@@ -64,27 +66,39 @@ def root():
 def get_item():
     db = DBConnection()
     sql = "SELECT * FROM items"
-    item_obj = db.execute_select(sql)
-    return item_obj
+    item_dict = {"items" : []}
+    items = db.execute_select(sql)
+    for i in range(len(items)):
+            item_dict["items"].append({"id": items[i][0], "name": items[i][1], "category": items[i][2], "image_filename": items[i][3]})
+    return item_dict
 
 @app.post("/items")
 def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile = File(...)):
+    image_processor = crop_image.cropImage()
     image_title = pathlib.Path(image.filename).stem
     image_suffix = pathlib.Path(image.filename).suffix
-    image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
-    
+    image_filename = image_title + image_suffix
+    hashed_image_filename = hashlib.sha256(image_title.encode()).hexdigest() + image_suffix
+
     #画像を保存
-    directory_name = "image"
+    directory_name = "processing_images"
     if not os.path.exists(directory_name):
         os.makedirs(directory_name)
-    filepath = f"image/{image_filename}"
-    with open(filepath, "w+b") as f:
+    processing_filepath = f"processing_images/{image_filename}"
+    with open(processing_filepath, "w+b") as f:
         shutil.copyfileobj(image.file, f)
+    processed_image = image_processor.rotate_img(directory_name+"/", image_filename)
+    #画像を保存
+    directory_name = "images"
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)
+    filepath = f"images/{hashed_image_filename}"
+    shutil.move(processed_image, filepath)
 
     #DB
     db = DBConnection()
     sql = "INSERT INTO items (name, category, image_filename) VALUES (?, ?, ?)"
-    parameter = [name, category, image_filename]
+    parameter = [name, category, hashed_image_filename]
     db.execute_insert(sql, parameter)
     return {"message": f"item received: {name}"}
 
@@ -105,19 +119,23 @@ def search_item(keyword: str):
     items = db.execute_select(sql, parameter)
     item_dict = {"items" : []}
     for i in range(len(items)):
-            item_dict["items"].append({"name": items[i][0], "category": items[i][1], "image_filename": items[i][2]})
+            item_dict["items"].append({"id": items[i][0], "name": items[i][1], "category": items[i][2], "image_filename": items[i][3]})
     return item_dict
     
 
 
 @app.get("/image/{items_image}")
 async def get_image(items_image):
+    db = DBConnection()
     # Create image path
-    image = images / items_image
-
     if not items_image.endswith(".jpg"):
         raise HTTPException(status_code=400, detail="Image path does not end with .jpg")
 
+    image_id = os.path.splitext(os.path.basename(items_image))[0]
+    sql = "SELECT name, category, image_filename AS items FROM items WHERE id=?"
+    parameter = [image_id]
+    item = db.execute_select(sql, parameter)
+    image = images /item[0][2]
     if not image.exists():
         logger.debug(f"Image not found: {image}")
         image = images / "default.jpg"
