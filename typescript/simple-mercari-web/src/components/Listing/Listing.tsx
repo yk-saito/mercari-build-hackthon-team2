@@ -11,6 +11,7 @@ type formDataType = {
   name: string,
   category: string,
   image: string | File,
+  flag: string,
 }
 
 export const Listing: React.FC<Prop> = (props) => {
@@ -19,6 +20,7 @@ export const Listing: React.FC<Prop> = (props) => {
     name: "",
     category: "",
     image: "",
+    flag: "false",
   };
   const [values, setValues] = useState<formDataType>(initialState);
 
@@ -36,12 +38,22 @@ export const Listing: React.FC<Prop> = (props) => {
       ...values, [event.target.name]: event.target.files![0],
     })
   };
+  const onFlagChange=()=>{
+    setValues({
+      ...values, flag: "true",
+    })
+  }
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData()
     data.append('name', values.name)
     data.append('category', values.category)
     data.append('image', values.image)
+    data.append('flag', values.flag)
+    console.log(data.get('name'));
+    console.log(data.get('category'));
+    console.log(data.get('image'));
+    console.log(data.get('flag'));
 
     fetch(server.concat('/items'), {
       method: 'POST',
@@ -81,6 +93,8 @@ export const Listing: React.FC<Prop> = (props) => {
             <br/>
             <input type='file' name='image' id='image' onChange={onFileChange} required />
           </div>
+          {/* <button onClick={onFlagChange}>中央に寄せる</button> */}
+          <input type='checkbox' onClick={onFlagChange}/> 画像を中央配置にされますか？
           <div className="text-center">
             <button type='submit' className="btn btn-danger">出品する</button>
           </div>

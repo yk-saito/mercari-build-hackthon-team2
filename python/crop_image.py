@@ -104,7 +104,7 @@ class cropImage:
                             cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y:y + h, x:x + w])
 
                     detect_count = detect_count + 1
-            return directory + str(detect_count-1) + name            
+            return str(detect_count-1) + name            
         return detect_contour(directory, name, affine_img, affine_img_w)
 
     # if __name__ == '__main__':
