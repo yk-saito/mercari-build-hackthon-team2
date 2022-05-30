@@ -94,18 +94,74 @@ class cropImage:
                     # 余白を考慮して画像を保存
                     if x - w * 0.15 >= 0 and x + w * 1.15 < width:#横幅の確保ができるとき
                         if y - h * 0.15 >= 0 and y + h * 1.15 < height:#縦幅の確保ができるとき
-                            cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)])
+                            if width == height:#すでに正方形だったら
+                                cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)])
+                            elif w > h:#横幅が大きければ
+                                diff = (w - h)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)], diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                            else:#縦幅が大きければ
+                                diff = (h - w)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x - int(w * 0.15):x + int(w * 1.15)], 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                            
                         else:
-                            cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)])
+                            if width == height:#すでに正方形だったら
+                                cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)])
+                            elif w > h:
+                                diff = (w - h)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)], diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                            else:#縦幅が大きければ
+                                diff = (h - w)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y:y + h, x - int(w * 0.15):x + int(w * 1.15)], 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
                     else:
                         if y - h * 0.15 >= 0 and y + h * 1.15 < height:#縦幅の確保ができるとき 
-                            cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w]) 
+                            if width == height:#すでに正方形だったら
+                                cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w]) 
+                            elif w > h:
+                                diff = (w - h)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w], diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                            else:#縦幅が大きければ
+                                diff = (h - w)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y - int(h * 0.15):y + int(h * 1.15), x:x + w], 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                                
                         else:   
-                            cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y:y + h, x:x + w])
+                            if width == height:#すでに正方形だったら
+                                cv2.imwrite(directory + str(detect_count) + name, affine_img_w[y:y + h, x:x + w])
+                            elif w > h:
+                                diff = (w - h)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y:y + h, x:x + w], diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
+                            else:#縦幅が大きければ
+                                diff = (h - w)//2#余白の大きさ
+                                output_img = cv2.copyMakeBorder(affine_img_w[y:y + h, x:x + w], 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+                                cv2.imwrite(directory + str(detect_count) + name, output_img)
 
                     detect_count = detect_count + 1
             return str(detect_count-1) + name            
         return detect_contour(directory, name, affine_img, affine_img_w)
+    
+    def square(self, directory, name):#余白を考慮して画像を保存
+        # 画像を読込
+        src = cv2.imread(directory+name, cv2.IMREAD_COLOR)
+        # 画像の大きさ
+        height, width, channels = src.shape[:3]
+        
+        if width == height:#すでに正方形だったら
+            cv2.imwrite(directory + 'sq_' + name, src)
+        elif width > height:#横幅が大きければ
+            diff = (width - height)//2#余白の大きさ
+            output_img = cv2.copyMakeBorder(src, diff, diff, 0, 0, cv2.BORDER_CONSTANT, value = [255,255,255])
+            cv2.imwrite(directory + 'sq_' + name, output_img)
+        else:#縦幅が大きければ
+            diff = (height - width)//2#余白の大きさ
+            output_img = cv2.copyMakeBorder(src, 0, 0, diff, diff, cv2.BORDER_CONSTANT, value = [255,255,255])
+            cv2.imwrite(directory + 'sq_' + name, output_img)
+        return 'sq_' + name
 
     # if __name__ == '__main__':
     #     rotate_img('python/pre_triming_images/mouse.jpg', 'mouse.jpg')

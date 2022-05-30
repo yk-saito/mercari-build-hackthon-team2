@@ -80,37 +80,32 @@ def add_item(name: str = Form(...), category: str = Form(...), image: UploadFile
     image_title = pathlib.Path(image.filename).stem
     image_suffix = pathlib.Path(image.filename).suffix
     image_filename = str(image_title + image_suffix)
+    
+    #画像を保存
+    directory_name_processing = "processing_images"
+    if not os.path.exists(directory_name_processing):
+        os.makedirs(directory_name_processing)
+    processing_filepath = f"processing_images/{image_filename}"
+    with open(processing_filepath, "w+b") as f:
+        shutil.copyfileobj(image.file, f)
 
     if flag == "true":
-        #画像を保存
-        directory_name_processing = "processing_images"
-        if not os.path.exists(directory_name_processing):
-            os.makedirs(directory_name_processing)
-        processing_filepath = f"processing_images/{image_filename}"
-        with open(processing_filepath, "w+b") as f:
-            shutil.copyfileobj(image.file, f)
-        
         processed_image = image_processor.rotate_img(directory_name_processing+"/", image_filename)
-        dt_now = datetime.datetime.now()
-        processed_image_title = os.path.splitext(os.path.basename(processed_image))[0] + dt_now.strftime('%Y-%m-%d %H:%M:%S')
-        hashed_image_filename = hashlib.sha256(processed_image_title.encode()).hexdigest() + image_suffix
-        old_filepath = directory_name_processing+"/" + processed_image
-        #画像を保存
-        directory_name = "images"
-        if not os.path.exists(directory_name):
-            os.makedirs(directory_name)
-        filepath = f"images/{hashed_image_filename}"
-        os.rename(old_filepath, filepath)
+        
     else:
-        dt_now = datetime.datetime.now()
-        hashed_image_filename = hashlib.sha256((image_title + dt_now.strftime('%Y-%m-%d %H:%M:%S')).encode()).hexdigest() + image_suffix
-        #画像を保存
-        directory_name = "images"
-        if not os.path.exists(directory_name):
-            os.makedirs(directory_name)
-        filepath = f"images/{hashed_image_filename}"
-        with open(filepath, "w+b") as f:
-            shutil.copyfileobj(image.file, f)
+        processed_image = image_processor.square(directory_name_processing+"/", image_filename)
+        
+    dt_now = datetime.datetime.now()
+    processed_image_title = os.path.splitext(os.path.basename(processed_image))[0] + dt_now.strftime('%Y-%m-%d %H:%M:%S')
+    hashed_image_filename = hashlib.sha256(processed_image_title.encode()).hexdigest() + image_suffix
+    old_filepath = directory_name_processing+"/" + processed_image
+    #画像を保存
+    directory_name = "images"
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)
+    filepath = f"images/{hashed_image_filename}"
+    os.rename(old_filepath, filepath)
+        
     #DB
     db = DBConnection()
     sql = "INSERT INTO items (name, category, image_filename) VALUES (?, ?, ?)"
